@@ -8,7 +8,7 @@ import css from './ContactForm.module.css';
 
 const initialValues = {
   name: '',
-  number: '',
+  phone: '',
 };
 
 const reducer = (state, action) => {
@@ -16,7 +16,7 @@ const reducer = (state, action) => {
     case 'name':
       return { ...state, name: action.payload };
     case 'number':
-      return { ...state, number: action.payload };
+      return { ...state, phone: action.payload };
     case 'reset':
       return { ...action.payload };
     default:
@@ -29,13 +29,13 @@ export const ContactForm = () => {
   const contacts = useSelector(getContacts);
   
 
-  const [{name, number}, dispatchReducer] = useReducer(reducer, initialValues);
+  const [{name, phone}, dispatchReducer] = useReducer(reducer, initialValues);
 
   const handleFormSubmit = e => {
     e.preventDefault();
 
     if (nameUnique(name)) {
-      dispatch(addContact(name, number));
+      dispatch(addContact({name, phone}));
     }
 
     dispatchReducer({ type: 'reset', payload: initialValues });
@@ -78,7 +78,7 @@ export const ContactForm = () => {
           name="number"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          value={number}
+          value={phone}
           onChange={handleInputChange}
           required
         />

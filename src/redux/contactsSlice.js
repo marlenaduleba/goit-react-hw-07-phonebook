@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import persistReducer from 'redux-persist/es/persistReducer';
 import storage from 'redux-persist/lib/storage';
-import { fetchContacts, addContact, deleteContact } from './operations';
+import { addContact, deleteContact } from './operations';
 
 const handlePending = state => {
   state.isLoading = true;
@@ -22,13 +22,6 @@ const contactsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-    .addCase(fetchContacts.pending, handlePending)
-    .addCase(fetchContacts.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.error = null;
-      state.items = action.payload;
-    })
-    .addCase(fetchContacts.rejected, handleRejected)
     .addCase(addContact.pending, handlePending)
     .addCase(addContact.fulfilled, (state, action) => {
       state.isLoading = false;
