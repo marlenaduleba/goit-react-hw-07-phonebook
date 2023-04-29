@@ -16,66 +16,38 @@ const contactsSlice = createSlice({
   name: 'contacts',
   initialState: {
     items: [],
+    isLoading: false,
+    error: null,
     filter: '',
   },
-  extraReducers: {
-    [fetchContacts.pending]: handlePending,
-    [fetchContacts.fulfilled](state, action) {
+  extraReducers: (builder) => {
+    builder
+    .addCase(fetchContacts.pending, handlePending)
+    .addCase(fetchContacts.fulfilled, (state, action) => {
       state.isLoading = false;
       state.error = null;
       state.items = action.payload;
-    },
-    [fetchContacts.rejected]: handleRejected,
-    [addContact.pending]: handlePending,
-    [addContact.fulfilled](state, action) {
+    })
+    .addCase(fetchContacts.rejected, handleRejected)
+    .addCase(addContact.pending, handlePending)
+    .addCase(addContact.fulfilled, (state, action) => {
       state.isLoading = false;
       state.error = null;
       state.items.push(action.payload);
-    },
-    [addContact.rejected]: handleRejected,
-    [deleteContact.pending]: handlePending,
-    [deleteContact.fulfilled](state, action) {
+    })
+    .addCase(addContact.rejected, handleRejected)
+    .addCase(deleteContact.pending, handlePending)
+    .addCase(deleteContact.fulfilled, (state, action) => {
       state.isLoading = false;
       state.error = null;
       const index = state.items.findIndex(
         task => task.id === action.payload.id
       );
       state.items.splice(index, 1);
-    },
-    [deleteContact.rejected]: handleRejected,
-    // [toggleCompleted.pending]: handlePending,
-    // [toggleCompleted.fulfilled](state, action) {
-    //   state.isLoading = false;
-    //   state.error = null;
-    //   const index = state.items.findIndex(
-    //     (task) => task.id === action.payload.id
-    //   );
-    //   state.items.splice(index, 1, action.payload);
-    // },
-    // [toggleCompleted.rejected]: handleRejected,
+    })
+    .addCase(deleteContact.rejected, handleRejected)
   },
   reducers: {
-    // addContact: {
-    //   reducer(state, action) {
-    //     state.items.push(action.payload);
-    //   },
-    //   prepare(name, number) {
-    //     return {
-    //       payload: {
-    //         id: nanoid(),
-    //         name,
-    //         number,
-    //       },
-    //     };
-    //   },
-    // },
-    // deleteContact(state, action) {
-    //   const contact = state.items.findIndex(contact => contact.id === action.payload);
-    //   state.items.splice(contact, 1);
-    // },
-    // setContacts(state, action) {
-    //   state.items = action.payload;
-    // },
     setFilter(state, action) {
       state.filter = action.payload;
     },
