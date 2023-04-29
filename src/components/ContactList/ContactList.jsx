@@ -1,13 +1,13 @@
 import { useSelector } from 'react-redux';
 import { ContactItem } from 'components/ContactItem/ContactItem';
-import { getFilteredContacts } from 'redux/selectors';
+import { selectFilteredContacts } from 'redux/selectors';
 
 
 import css from './ContactList.module.css';
 
 
 export const ContactList = () => {
-const filteredContacts = useSelector(getFilteredContacts);
+const filteredContacts = useSelector(selectFilteredContacts);
 
 if (filteredContacts.length === 0) {
   return <></>;

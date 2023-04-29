@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from 'redux/operations';
-import { getContacts } from 'redux/selectors';
+import { selectContacts } from 'redux/selectors';
 import { useReducer } from 'react';
 import { Notify } from 'notiflix';
 
@@ -26,7 +26,7 @@ const reducer = (state, action) => {
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(selectContacts);
   
 
   const [{name, phone}, dispatchReducer] = useReducer(reducer, initialValues);
