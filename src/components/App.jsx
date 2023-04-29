@@ -1,17 +1,19 @@
-import Container from "./Layout/Layout";
-import { Phonebook } from "./Phonebook/Phonebook";
-import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-import { store, persistor } from "redux/store";
+import { useEffect } from 'react';
+import Container from './Layout/Layout';
+import { Phonebook } from './Phonebook/Phonebook';
+import { useDispatch } from 'react-redux';
+import { fetchContacts } from 'redux/operations';
 
 export const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
   return (
-    <Provider store={store} >
-      <PersistGate loading={null} persistor={persistor} >
-        <Container>
-          <Phonebook />
-        </Container>
-      </PersistGate>
-    </Provider>
+    <Container>
+      <Phonebook />
+    </Container>
   );
 };

@@ -1,7 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import persistReducer from 'redux-persist/es/persistReducer';
-import storage from 'redux-persist/lib/storage';
-import { addContact, deleteContact } from './operations';
+import { fetchContacts, addContact, deleteContact } from './operations';
 
 const handlePending = state => {
   state.isLoading = true;
@@ -20,25 +18,32 @@ const contactsSlice = createSlice({
     error: null,
     filter: '',
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-    .addCase(addContact.pending, handlePending)
-    .addCase(addContact.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.error = null;
-      state.items.push(action.payload);
-    })
-    .addCase(addContact.rejected, handleRejected)
-    .addCase(deleteContact.pending, handlePending)
-    .addCase(deleteContact.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.error = null;
-      const index = state.items.findIndex(
-        task => task.id === action.payload.id
-      );
-      state.items.splice(index, 1);
-    })
-    .addCase(deleteContact.rejected, handleRejected)
+      .addCase(fetchContacts.pending, handlePending)
+      .addCase(fetchContacts.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.items.push(action.payload);
+      })
+      .addCase(fetchContacts.rejected, handleRejected)
+      .addCase(addContact.pending, handlePending)
+      .addCase(addContact.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.items.push(action.payload);
+      })
+      .addCase(addContact.rejected, handleRejected)
+      .addCase(deleteContact.pending, handlePending)
+      .addCase(deleteContact.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        const index = state.items.findIndex(
+          task => task.id === action.payload.id
+        );
+        state.items.splice(index, 1);
+      })
+      .addCase(deleteContact.rejected, handleRejected);
   },
   reducers: {
     setFilter(state, action) {
@@ -47,15 +52,6 @@ const contactsSlice = createSlice({
   },
 });
 
-const persistConfig = {
-  key: 'contacts',
-  storage,
-  whitelist: ['items', 'filter'],
-};
-
-export const contactsReducer = persistReducer(
-  persistConfig,
-  contactsSlice.reducer
-);
+export const contactsReducer = contactsSlice.reducer;
 
 export const { setFilter } = contactsSlice.actions;
