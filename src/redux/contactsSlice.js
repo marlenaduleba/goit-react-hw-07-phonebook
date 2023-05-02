@@ -1,14 +1,20 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { fetchContacts, addContact, deleteContact } from './operations';
 
-const handlePending = state => {
-  state.isLoading = true;
+const handleFetchFullfilled = (state, action) => {
+  state.items = action.payload;
 };
 
-const handleRejected = (state, action) => {
-  state.isLoading = false;
-  state.error = action.payload;
+const handleAddFullfilled = (state, action) => {
+  state.items.push(action.payload);
 };
+
+const handleDeleteFullfilled = (state, action) => {
+  const index = state.items.findIndex(task => task.id === action.payload.id);
+  state.items.splice(index, 1);
+};
+
+const actions = [fetchContacts, addContact, deleteContact];
 
 const contactsSlice = createSlice({
   name: 'contacts',
@@ -18,40 +24,35 @@ const contactsSlice = createSlice({
     error: null,
     filter: '',
   },
-  extraReducers: builder => {
-    builder
-      .addCase(fetchContacts.pending, handlePending)
-      .addCase(fetchContacts.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.error = null;
-        state.items = action.payload;
-      })
-      .addCase(fetchContacts.rejected, handleRejected)
-      .addCase(addContact.pending, handlePending)
-      .addCase(addContact.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.error = null;
-        state.items.push(action.payload);
-      })
-      .addCase(addContact.rejected, handleRejected)
-      .addCase(deleteContact.pending, handlePending)
-      .addCase(deleteContact.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.error = null;
-        const index = state.items.findIndex(
-          task => task.id === action.payload.id
-        );
-        state.items.splice(index, 1);
-      })
-      .addCase(deleteContact.rejected, handleRejected);
-  },
   reducers: {
     setFilter(state, action) {
       state.filter = action.payload;
     },
   },
+
+  extraReducers: builder =>
+    builder
+      .addCase(fetchContacts.fulfilled, handleFetchFullfilled)
+      .addCase(addContact.fulfilled, handleAddFullfilled)
+      .addCase(deleteContact.fulfilled, handleDeleteFullfilled)
+      .addMatcher(
+        isAnyOf(...actions.map(action => action.fulfilled)),
+        state => {
+          state.isLoading = false;
+          state.error = null;
+        }
+      )
+      .addMatcher(isAnyOf(...actions.map(action => action.pending)), state => {
+        state.isLoading = true;
+      })
+      .addMatcher(
+        isAnyOf(...actions.map(action => action.rejected)),
+        (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload;
+        }
+      ),
 });
 
 export const contactsReducer = contactsSlice.reducer;
-
 export const { setFilter } = contactsSlice.actions;
