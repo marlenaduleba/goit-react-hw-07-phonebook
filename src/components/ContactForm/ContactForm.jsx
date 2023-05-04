@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from 'redux/operations';
-import { selectContacts } from 'redux/selectors';
+import { selectContacts, selectError, selectIsLoading } from 'redux/selectors';
 import { useReducer } from 'react';
 import { Notify } from 'notiflix';
+import Loader from 'components/Loader/Loader';
 
 import css from './ContactForm.module.css';
 
@@ -27,6 +28,8 @@ const reducer = (state, action) => {
 export const ContactForm = () => {
   const dispatch = useDispatch();
   const contacts = useSelector(selectContacts);
+  const error = useSelector(selectError);
+ 
   
 
   const [{name, phone}, dispatchReducer] = useReducer(reducer, initialValues);
@@ -36,6 +39,7 @@ export const ContactForm = () => {
 
     if (nameUnique(name)) {
       dispatch(addContact({name, phone}));
+      Notify.success(`${name} added to your contacts.`)
     }
 
     dispatchReducer({ type: 'reset', payload: initialValues });
@@ -55,6 +59,11 @@ export const ContactForm = () => {
     const { name, value } = e.currentTarget;
     dispatchReducer({ type: name, payload: value });
   };
+
+  if (error) {
+    Notify.error(`ERROR`);
+      return;
+  }
 
   return (
     <form className={css.form} onSubmit={handleFormSubmit}>
@@ -84,7 +93,7 @@ export const ContactForm = () => {
         />
       </label>
       <button className={css.btn} type="submit">
-        Add contact
+       Add Contact
       </button>
     </form>
   );

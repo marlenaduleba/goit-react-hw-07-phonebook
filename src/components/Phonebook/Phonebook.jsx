@@ -3,22 +3,24 @@ import { Filter } from 'components/Filter/Filter';
 import { ContactForm } from 'components/ContactForm/ContactForm';
 import { ContactList } from 'components/ContactList/ContactList';
 import { useSelector } from 'react-redux';
-import { selectContacts, selectError, selectIsLoading } from 'redux/selectors';
+import { selectContacts, selectIsLoading } from 'redux/selectors';
+import Loader from 'components/Loader/Loader';
 
 import css from './Phonebook.module.css';
 
 export const Phonebook = () => {
   const contacts = useSelector(selectContacts);
   const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
 
   return (
     <div className={css.box}>
       <Section title="Phonebook">
         <ContactForm />
+         {isLoading && <Loader  />}
       </Section>
 
       <Section title="Contacts">
+       
         {contacts.length > 0 ? (
           <Filter />
         ) : (
@@ -27,8 +29,8 @@ export const Phonebook = () => {
             Please add new contact.
           </p>
         )}
-        {isLoading && !error && <b>Request in progress...</b> }
         <ContactList />
+        
       </Section>
     </div>
   );
