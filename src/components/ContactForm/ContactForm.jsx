@@ -1,10 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from 'redux/operations';
-import { selectContacts, selectError, selectIsLoading } from 'redux/selectors';
+import { selectContacts, selectError} from 'redux/selectors';
 import { useReducer } from 'react';
 import { Notify } from 'notiflix';
-import Loader from 'components/Loader/Loader';
-
 import css from './ContactForm.module.css';
 
 const initialValues = {
